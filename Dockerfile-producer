@@ -1,0 +1,18 @@
+# Dockerfile-producer
+FROM python:3.9-slim
+
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+COPY producer.py .
+COPY utils.py .
+COPY consts.py .
+
+RUN pip install pika
+RUN pip install numpy
+RUN apt-get update
+RUN apt-get install -y curl
+EXPOSE 4369 5671 5672 25672 15671 15672
+
+CMD ["python", "producer.py"]

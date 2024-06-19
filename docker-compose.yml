@@ -1,0 +1,32 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:15672"]
+        # interval: 10s
+        # timeout: 5s
+        retries: 5
+  
+  producer:
+    build:
+      context: .
+      dockerfile: Dockerfile-producer
+    restart: on-failure
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
+
+  consumer:
+    build:
+      context: .
+      dockerfile: Dockerfile-consumer
+    restart: on-failure
+    depends_on:
+      - rabbitmq
+    links:
+      - rabbitmq
